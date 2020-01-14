@@ -5,15 +5,30 @@
 
 Simple router for php7.1+ projects like API.
 
-## Установка
-С помощью композера:
-```
+## Install
+Using composer:
+```console
 $ composer require zhukmax/simple-router
 ```
 
-## Лицензия
+## Using
+```php
+<?php
 
-The Apache License Version 2.0. Текст лицензии находится в файле [License File](license.md).
+require_once 'vendor/autoload.php';
+
+use ProjectName\API\Controllers\IndexController;
+use Zhukmax\Router\Router;
+
+$router = new Router();
+$router
+    ->get('/api/users', IndexController::class, 'get')
+    ->output();
+```
+
+## License
+
+The Apache License Version 2.0. You can find text of License in the [License File](license.md).
 
 [ico-version]: https://img.shields.io/packagist/v/zhukmax/simple-router.svg
 [ico-license]: https://img.shields.io/badge/license-Apache%202-brightgreen.svg
