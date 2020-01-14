@@ -1,0 +1,18 @@
+{
+  "name": "zhukmax/simple-router",
+  "description": "Simple router for php7.1+ projects",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Zhuk Max",
+      "email": "zhukmax@ya.ru"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "require-dev": {},
+  "autoload": {
+    "classmap": ["src"]
+  }
+}
