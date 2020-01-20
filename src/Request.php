@@ -39,8 +39,8 @@ class Request
             $options['options']['max_range'] = $max;
         }
         
-        return $_POST[$name] ? filter_var($_POST[$name], FILTER_VALIDATE_INT, $options)) :
-            filter_var($_GET[$name], FILTER_VALIDATE_INT, $options)) ?: 0;
+        return $_POST[$name] ? filter_var($_POST[$name], FILTER_VALIDATE_INT, $options) :
+            filter_var($_GET[$name], FILTER_VALIDATE_INT, $options) ?: 0;
     }
     
     /**
