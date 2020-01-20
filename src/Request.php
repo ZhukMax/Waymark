@@ -28,19 +28,15 @@ class Request
     {
         $options = [
             'options' => [
-                'default' => 0
-            ]
+                'default' => 0,
+                'min_range' => $min ?: -1 * pow(10, 10),
+                'max_range' => $max ?: pow(10, 10)
+            ],
+            'flags' => FILTER_FLAG_ALLOW_OCTAL
         ];
         
-        if (isset($min) || $min == 0) {
-            $options['options']['min_range'] = $min;
-        }
-        if (isset($max) || $max == 0) {
-            $options['options']['max_range'] = $max;
-        }
-        
         return $_POST[$name] ? filter_var($_POST[$name], FILTER_VALIDATE_INT, $options) :
-            filter_var($_GET[$name], FILTER_VALIDATE_INT, $options) ?: 0;
+            filter_var($_GET[$name], FILTER_VALIDATE_INT, $options);
     }
     
     /**
