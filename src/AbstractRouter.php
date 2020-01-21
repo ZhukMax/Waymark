@@ -8,12 +8,25 @@ namespace Zhukmax\SimpleRouter;
  */
 class AbstractRouter
 {
+    /** @var mixed Template engine's object */
+    public $tplEngine;
     /** @var array */
     protected $routes;
     /** @var string */
     protected $type;
     /** @var string|array */
     protected $output;
+
+    /**
+     * AbstractRouter constructor.
+     * @param array $params
+     */
+    public function __construct(array $params)
+    {
+        if ($params['tplEngine']) {
+            $this->tplEngine = $params['tplEngine'];
+        }
+    }
 
     /**
      * @param string $path
@@ -80,7 +93,7 @@ class AbstractRouter
         $action = $activeRoute['action'];
         $this->type = $activeRoute['type'];
 
-        $this->output = $class::$action();
+        $this->output = $class::$action($this->tplEngine);
     }
 
     /**
