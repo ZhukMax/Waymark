@@ -28,7 +28,10 @@ $router
 
 ```php
 <?php
-class EventsController
+
+namespace ProjectName\API\Controllers;
+
+class IndexController
 {
     public static function actionGetAll()
     {
