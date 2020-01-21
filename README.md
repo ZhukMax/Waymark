@@ -22,8 +22,25 @@ use Zhukmax\Router\Router;
 
 $router = new Router();
 $router
-    ->get('/api/users', IndexController::class, 'get')
+    ->get('/api/users', IndexController::class, 'actionGetAll', 'json')
     ->output();
+```
+
+```php
+<?php
+class EventsController
+{
+    public static function actionGetAll()
+    {
+        $date = Request::get('date');
+        $page = Request::getInt('page', 0);
+        
+        return [
+            'date' => $date,
+            'page'=> $page
+        ];
+    }
+}
 ```
 
 ## License
