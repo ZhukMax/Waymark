@@ -12,24 +12,35 @@ $ composer require zhukmax/simple-router
 ```
 
 ## Using
+If you need Template engine in your project you can use your favorite like I use Twig in example, but if you need only json/csv responces then just use SimpleRouter without any Template engine.
 ```php
 <?php
 
 require_once 'vendor/autoload.php';
 
 use ProjectName\API\Controllers\IndexController;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 use Zhukmax\Router\Router;
 
-$router = new Router();
+/** Add Twig Template engine **/
+$loader = new FilesystemLoader(__DIR__ . '/src/views');
+$twig = new Environment($loader);
+
+$router = new Router([
+    'tplEngine' => $twig
+]);
 $router
     ->get('/api/users', IndexController::class, 'actionGetAll', 'json')
     ->output();
 ```
-
+You can use Request static methods if you need $_GET/$_POST data in your action-method. The methods have basic data-filters for *intiger*, *email*.
 ```php
 <?php
 
 namespace ProjectName\API\Controllers;
+
+use Zhukmax\Router\Request;
 
 class IndexController
 {
