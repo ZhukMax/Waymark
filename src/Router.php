@@ -6,7 +6,7 @@ namespace Zhukmax\SimpleRouter;
  * Class Router
  * @package Zhukmax\SimpleRouter
  */
-class Router extends AbstractRouter implements RouterInterface
+class Router extends AbstractRouter
 {
     /**
      * @param string $path

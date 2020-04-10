@@ -34,6 +34,18 @@ $router
     ->get('/api/users', IndexController::class, 'actionGetAll', 'json')
     ->output();
 ```
+Json-file with routes example:
+```json
+{
+  "get": {
+    "users": [
+      "NameOfControllerWithoutControllerSuffix",
+      "NameOfAction",
+      "html"
+    ]
+  }
+}
+```
 You can use Request static methods if you need $_GET/$_POST data in your action-method. The methods have basic data-filters for *intiger*, *email*.
 ```php
 <?php

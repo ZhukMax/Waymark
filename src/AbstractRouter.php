@@ -6,7 +6,7 @@ namespace Zhukmax\SimpleRouter;
  * Class AbstractRouter
  * @package Zhukmax\SimpleRouter
  */
-class AbstractRouter
+abstract class AbstractRouter implements RouterInterface
 {
     /** @var mixed Template engine's object */
     public $tplEngine;
@@ -25,6 +25,25 @@ class AbstractRouter
     {
         if ($params['tplEngine']) {
             $this->tplEngine = $params['tplEngine'];
+        }
+
+        if ($params['routes']) {
+            if (is_file($params['routes'])) {
+                $routesGroups = json_decode(file_get_contents($params['routes']), true);
+            }
+
+            $this->routesFromArray($routesGroups ?? $params['routes']);
+        }
+    }
+
+    /**
+     * @param array $routesGroups
+     */
+    protected function routesFromArray(array $routesGroups)
+    {
+        foreach ($routesGroups as $key => $group) {
+            $method = isset($group[2]) ? $group[2] : 'json';
+            $this->$key(key($group), $group[0] . 'Controller', $group[1], $method);
         }
     }
 
