@@ -3,5 +3,6 @@
 composer.phar
 composer.lock
 /vendor/
+/tests/
 *.lnk
 *.ini

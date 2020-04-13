@@ -21,7 +21,7 @@ require_once 'vendor/autoload.php';
 use ProjectName\API\Controllers\IndexController;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Zhukmax\Router\Router;
+use Zhukmax\SimpleRouter\Router;
 
 /** Add Twig Template engine **/
 $loader = new FilesystemLoader(__DIR__ . '/src/views');

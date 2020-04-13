@@ -42,8 +42,9 @@ abstract class AbstractRouter implements RouterInterface
     protected function routesFromArray(array $routesGroups)
     {
         foreach ($routesGroups as $key => $group) {
-            $method = isset($group[2]) ? $group[2] : 'json';
-            $this->$key(key($group), $group[0] . 'Controller', $group[1], $method);
+            foreach ($group as $path => $item) {
+                $this->$key($path, $item[0] . 'Controller', $item[1]);
+            }
         }
     }
 
@@ -128,10 +129,11 @@ abstract class AbstractRouter implements RouterInterface
      * @return array
      * @throws \Exception
      */
-    private final function getActiveRoute()
+    private final function getActiveRoute(): array
     {
+        $requestPath = str_replace("?".$_SERVER["QUERY_STRING"], "", $_SERVER["REQUEST_URI"]);
         foreach ($this->routes as $path => $route) {
-            if (preg_match($path, $_SERVER["REDIRECT_URL"])) {
+            if (preg_match($path, $requestPath)) {
                 $activeRoute = $route;
                 break;
             }
@@ -142,7 +144,7 @@ abstract class AbstractRouter implements RouterInterface
         }
 
         if (!in_array(strtolower($_SERVER["REQUEST_METHOD"]), $activeRoute['method'])) {
-            throw new \Exception("Wrong HTTP method");
+            throw new \Exception("Wrong HTTP method: " . $activeRoute['method']);
         }
 
         return $activeRoute;
