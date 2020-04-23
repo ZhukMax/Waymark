@@ -28,7 +28,9 @@ $loader = new FilesystemLoader(__DIR__ . '/src/views');
 $twig = new Environment($loader);
 
 $router = new Router([
-    'tplEngine' => $twig
+    'tplEngine' => $twig,
+    'namespace' => '\\ProjectName\\API\\Controllers',
+    'routes' => dirname(__FILE__).'/routes.json'
 ]);
 $router
     ->get('/api/users', IndexController::class, 'actionGetAll', 'json')

@@ -70,32 +70,12 @@ class Router extends AbstractRouter
 
     public function output()
     {
-        $this->executeRoute();
-        $this->getType();
-
-        switch ($this->type) {
-            case 'json':
-                print_r(json_encode($this->output, JSON_UNESCAPED_UNICODE));
-                break;
-
-            case 'csv':
-                foreach ($this->output as $item) {
-                    echo $item . "\n";
-                }
-                break;
-
-            case 'html':
-                print_r($this->output);
-                break;
-
-            case 'text':
-                print_r($this->output);
-                break;
-
-            default:
-                print_r(json_encode($this->output, JSON_UNESCAPED_UNICODE));
-                break;
+        try {
+            $this->executeRoute();
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
         }
-        exit;
+
+        $this->finishWork();
     }
 }

@@ -2,20 +2,25 @@
 
 namespace Zhukmax\SimpleRouter;
 
+use Zhukmax\SimpleRouter\Types\Json;
+use Zhukmax\SimpleRouter\Types\TypeInterface;
+
 /**
  * Class AbstractRouter
  * @package Zhukmax\SimpleRouter
  */
 abstract class AbstractRouter implements RouterInterface
 {
-    /** @var mixed Template engine's object */
+    /** @var TplEngineInterface Template engine's object */
     public $tplEngine;
     /** @var array */
     protected $routes;
-    /** @var string */
+    /** @var TypeInterface */
     protected $type;
     /** @var string|array */
     protected $output;
+    /** @var string */
+    protected $namespace;
 
     /**
      * AbstractRouter constructor.
@@ -23,27 +28,38 @@ abstract class AbstractRouter implements RouterInterface
      */
     public function __construct(array $params)
     {
-        if ($params['tplEngine']) {
-            $this->tplEngine = $params['tplEngine'];
-        }
+        $this->tplEngine = $params['tplEngine'] ?? null;
+        $this->namespace = $params['namespace'] ?? null;
 
         if ($params['routes']) {
             if (is_file($params['routes'])) {
                 $routesGroups = json_decode(file_get_contents($params['routes']), true);
             }
 
-            $this->routesFromArray($routesGroups ?? $params['routes']);
+            try {
+                $this->routesFromArray($routesGroups ?? $params['routes']);
+            } catch (Exception $e) {
+                $this->error($e->getMessage());
+                $this->finishWork();
+            }
         }
     }
 
     /**
      * @param array $routesGroups
+     * @throws Exception
      */
     protected function routesFromArray(array $routesGroups)
     {
         foreach ($routesGroups as $key => $group) {
             foreach ($group as $path => $item) {
-                $this->$key($path, $item[0] . 'Controller', $item[1]);
+                /** @var string $type */
+                $type = $item[2] ?? 'json';
+
+                if (!method_exists($this, $key)) {
+                    throw new Exception("Not exist method: " . $key);
+                }
+                $this->$key($path, $item[0] . 'Controller', $item[1], $type);
             }
         }
     }
@@ -58,6 +74,7 @@ abstract class AbstractRouter implements RouterInterface
      */
     protected function setRoute(string $path, string $class, string $action, array $methods, string $type): self
     {
+        /** @var string $regex */
         $regex = self::routeToRegex($path);
         $this->routes[$regex] = [
             'class'  => $class,
@@ -69,51 +86,61 @@ abstract class AbstractRouter implements RouterInterface
         return $this;
     }
 
-    protected function getType()
+    /**
+     * @throws Exception
+     */
+    protected function executeRoute(): void
     {
-        switch ($this->type) {
-            case 'json':
-                header('Content-Type: application/json');
-                break;
+        /** @var array $activeRoute */
+        $activeRoute = $this->getActiveRoute();
 
-            case 'csv':
-                $date = date("Ymd_Hms");
-                header("Content-type: text/csv");
-                header("Content-Disposition: attachment; filename=$date.csv");
-                header("Pragma: no-cache");
-                header("Expires: 0");
-                break;
-
-            case 'html':
-                header("Content-Type: text/html");
-                break;
-
-            case 'text':
-                header("Content-Type: text/plain");
-                break;
-
-            default:
-                header('Content-Type: application/json');
-                break;
+        if (!strpos($activeRoute['class'], '\\') && isset($this->namespace)) {
+            $className = $this->namespace . '\\' . $activeRoute['class'];
+        } else {
+            $className = $activeRoute['class'];
         }
+
+        if (!class_exists($className)) {
+            throw new Exception("Controller is not exists");
+        }
+
+        /** @var AbstractController $controller */
+        $controller = (new $className($this->tplEngine));
+        $action = $activeRoute['action'];
+        $this->setType($activeRoute['type']);
+
+        $this->output = $controller->$action();
     }
 
-    protected function executeRoute()
+    /**
+     * @param string $message
+     */
+    protected final function error(string $message): void
     {
-        try {
-            $activeRoute = $this->getActiveRoute();
-        } catch (\Exception $e) {
-            $this->output['status'] = "Error";
-            $this->output['error'] = $e->getMessage();
+        $this->output['status'] = "Error";
+        $this->output['error'] = $message;
+        $this->type = new Json();
+    }
 
-            return null;
+    protected final function finishWork(): void
+    {
+        $this->type->header();
+        $this->type->body($this->output);
+        exit;
+    }
+
+    /**
+     * @param string $activeRouteType
+     * @throws Exception
+     */
+    private function setType(string $activeRouteType): void
+    {
+        /** @var string $type */
+        $type = "\\Zhukmax\\SimpleRouter\\Types\\" . ucfirst($activeRouteType);
+        if (!class_exists($type)) {
+            throw new Exception("Type class is not exists");
         }
-
-        $class = $activeRoute['class'];
-        $action = $activeRoute['action'];
-        $this->type = $activeRoute['type'];
-
-        $this->output = $class::$action($this->tplEngine);
+        $this->type = new $type();
     }
 
     /**
@@ -127,11 +154,11 @@ abstract class AbstractRouter implements RouterInterface
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     private final function getActiveRoute(): array
     {
-        $requestPath = str_replace("?".$_SERVER["QUERY_STRING"], "", $_SERVER["REQUEST_URI"]);
+        $requestPath = explode("?", $_SERVER["REQUEST_URI"])[0];
         foreach ($this->routes as $path => $route) {
             if (preg_match($path, $requestPath)) {
                 $activeRoute = $route;
@@ -140,11 +167,11 @@ abstract class AbstractRouter implements RouterInterface
         }
 
         if (!isset($activeRoute)) {
-            throw new \Exception("Wrong method");
+            throw new Exception("Wrong method");
         }
 
         if (!in_array(strtolower($_SERVER["REQUEST_METHOD"]), $activeRoute['method'])) {
-            throw new \Exception("Wrong HTTP method: " . $activeRoute['method']);
+            throw new Exception("Wrong HTTP method: " . $activeRoute['method']);
         }
 
         return $activeRoute;

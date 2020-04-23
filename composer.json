@@ -1,6 +1,7 @@
 {
   "name": "zhukmax/simple-router",
   "description": "Simple router for php7.1+ projects",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -14,6 +15,6 @@
   },
   "require-dev": {},
   "autoload": {
-    "classmap": ["src"]
+    "classmap": ["src", "tests"]
   }
 }
