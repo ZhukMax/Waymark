@@ -54,9 +54,10 @@ You can use Request static methods if you need $_GET/$_POST data in your action-
 
 namespace ProjectName\API\Controllers;
 
+use Zhukmax\SimpleRouter\AbstractController;
 use Zhukmax\Router\Request;
 
-class IndexController
+class IndexController extends AbstractController
 {
     public static function actionGetAll()
     {
@@ -67,6 +68,14 @@ class IndexController
             'date' => $date,
             'page'=> $page
         ];
+    }
+
+    public function tst(string $date, int $page)
+    {
+        return $this->tpl->render('index.twig', [
+            'date' => $date,
+            'page' => $page
+        ]);
     }
 }
 ```

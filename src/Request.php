@@ -16,7 +16,7 @@ class Request
      */
     public static function get(string $name)
     {
-        return $_REQUEST[$name] ?? null;
+        return str_replace(['\'', '"'], ['\\\'', '\\"'], $_REQUEST[$name]) ?? null;
     }
     
     /**
@@ -36,7 +36,7 @@ class Request
             'flags' => FILTER_FLAG_ALLOW_OCTAL
         ];
         
-        return filter_var($_REQUEST[$name], FILTER_VALIDATE_INT, $options);
+        return filter_var(self::get($name), FILTER_VALIDATE_INT, $options);
     }
     
     /**
@@ -45,7 +45,7 @@ class Request
      */
     public static function getEmail(string $name)
     {
-        return filter_var($_REQUEST[$name], FILTER_VALIDATE_EMAIL) ?: '';
+        return filter_var(self::get($name), FILTER_VALIDATE_EMAIL) ?: '';
     }
 
     /**
@@ -60,9 +60,7 @@ class Request
         $reflection = new ReflectionMethod($class, $method);
 
         foreach($reflection->getParameters() AS $arg) {
-            if($_REQUEST[$arg->name]) {
-                $args[$arg->name] = $_REQUEST[$arg->name] ?? null;
-            }
+            $args[$arg->name] = self::get($arg->name) ?? null;
         }
 
         return $args;
