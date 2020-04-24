@@ -2,6 +2,8 @@
 
 namespace Zhukmax\SimpleRouter;
 
+use ReflectionMethod;
+
 /**
  * Class Request
  * @package Zhukmax\SimpleRouter
@@ -14,8 +16,7 @@ class Request
      */
     public static function get(string $name)
     {
-        return $_POST[$name] ? $_POST[$name] :
-            $_GET[$name] ?: null;
+        return $_REQUEST[$name] ?? null;
     }
     
     /**
@@ -35,8 +36,7 @@ class Request
             'flags' => FILTER_FLAG_ALLOW_OCTAL
         ];
         
-        return $_POST[$name] ? filter_var($_POST[$name], FILTER_VALIDATE_INT, $options) :
-            filter_var($_GET[$name], FILTER_VALIDATE_INT, $options);
+        return filter_var($_REQUEST[$name], FILTER_VALIDATE_INT, $options);
     }
     
     /**
@@ -45,7 +45,26 @@ class Request
      */
     public static function getEmail(string $name)
     {
-        return $_POST[$name] ? filter_var($_POST[$name], FILTER_VALIDATE_EMAIL) :
-            filter_var($_GET[$name], FILTER_VALIDATE_EMAIL) ?: '';
+        return filter_var($_REQUEST[$name], FILTER_VALIDATE_EMAIL) ?: '';
+    }
+
+    /**
+     * @param string $class
+     * @param string $method
+     * @return array
+     * @throws \ReflectionException
+     */
+    public static function getArgs(string $class, string $method): array
+    {
+        $args = [];
+        $reflection = new ReflectionMethod($class, $method);
+
+        foreach($reflection->getParameters() AS $arg) {
+            if($_REQUEST[$arg->name]) {
+                $args[$arg->name] = $_REQUEST[$arg->name] ?? null;
+            }
+        }
+
+        return $args;
     }
 }

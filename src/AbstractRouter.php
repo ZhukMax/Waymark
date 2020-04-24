@@ -109,7 +109,14 @@ abstract class AbstractRouter implements RouterInterface
         $action = $activeRoute['action'];
         $this->setType($activeRoute['type']);
 
-        $this->output = $controller->$action();
+        try {
+            /** @var array $args */
+            $args = Request::getArgs($className, $action);
+            $this->output = call_user_func_array([$controller, $action], $args);
+        } catch (\ReflectionException $e) {
+            $this->error($e->getMessage());
+            $this->finishWork();
+        }
     }
 
     /**
