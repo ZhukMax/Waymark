@@ -90,12 +90,16 @@ class Request
             $default = null;
         }
 
+        if (!$arg->getType()) {
+            return self::get($arg->getName()) ?? $default;
+        }
+
         switch ($arg->getType()->getName()) {
             case 'string':
                 return self::get($arg->getName()) ?? $default;
 
             case 'int':
-                return self::getInt($arg->getName(), null, null, $default);
+                return self::getInt($arg->getName(), null, null, $default ?? 0);
 
             case 'bool':
                 return self::getBool($arg->getName(), $default ?? false);
