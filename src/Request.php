@@ -68,14 +68,13 @@ class Request
      */
     public static function getArgs(string $class, string $method): array
     {
-        $args = [];
         $reflection = new ReflectionMethod($class, $method);
 
         foreach($reflection->getParameters() AS $arg) {
             $args[$arg->name] = self::getArgByType($arg);
         }
 
-        return $args;
+        return $args ?? [];
     }
 
     /**

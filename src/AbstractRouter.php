@@ -93,16 +93,7 @@ abstract class AbstractRouter implements RouterInterface
     {
         /** @var array $activeRoute */
         $activeRoute = $this->getActiveRoute();
-
-        if (!strpos($activeRoute['class'], '\\') && isset($this->namespace)) {
-            $className = $this->namespace . '\\' . $activeRoute['class'];
-        } else {
-            $className = $activeRoute['class'];
-        }
-
-        if (!class_exists($className)) {
-            throw new Exception("Controller is not exists");
-        }
+        $className = $this->controllerName($activeRoute);
 
         /** @var AbstractController $controller */
         $controller = (new $className($this->tplEngine));
@@ -137,6 +128,26 @@ abstract class AbstractRouter implements RouterInterface
     }
 
     /**
+     * @param array $activeRoute
+     * @return string
+     * @throws Exception
+     */
+    private function controllerName(array $activeRoute): string
+    {
+        if (!strpos($activeRoute['class'], '\\') && isset($this->namespace)) {
+            $className = $this->namespace . '\\' . $activeRoute['class'];
+        } else {
+            $className = $activeRoute['class'];
+        }
+
+        if (!class_exists($className)) {
+            throw new Exception("Controller is not exists");
+        }
+
+        return $className;
+    }
+
+    /**
      * @param string $activeRouteType
      * @throws Exception
      */
@@ -156,6 +167,16 @@ abstract class AbstractRouter implements RouterInterface
      */
     private static final function routeToRegex(string $path): string
     {
+        preg_match_all('/{\w+:\w+}/', $path, $matches);
+        if ($matches[0]) {
+            $reqPieces = explode('/', $path);
+        }
+
+        foreach ($matches[0] as $match) {
+            $data = explode(':', str_replace(['{', '}'], '', $match));
+            $path = str_replace($match, '{'.$data[1].'}', $path);
+            $_REQUEST[$data[0]] = $match . array_search($match, $reqPieces ?? []);
+        }
         return '/' . str_replace(['/', '{int}', '{str}'], ['\\/', '(\d+)', '(\w+)'], $path) . '$/';
     }
 
@@ -169,12 +190,13 @@ abstract class AbstractRouter implements RouterInterface
         foreach ($this->routes as $path => $route) {
             if (preg_match($path, $requestPath)) {
                 $activeRoute = $route;
+                $this->setArgs($requestPath);
                 break;
             }
         }
 
         if (!isset($activeRoute)) {
-            throw new Exception("Wrong method");
+            throw new Exception("Wrong url: hasn't equal route");
         }
 
         if (!in_array(strtolower($_SERVER["REQUEST_METHOD"]), $activeRoute['method'])) {
@@ -182,5 +204,19 @@ abstract class AbstractRouter implements RouterInterface
         }
 
         return $activeRoute;
+    }
+
+    /**
+     * @param string $requestPath
+     */
+    private function setArgs(string $requestPath): void
+    {
+        $reqPieces = explode('/', $requestPath);
+        foreach($_REQUEST as $key => $item) {
+            if (preg_match('/{\w+:\w+}/', $item, $match)) {
+                $i = (int)str_replace($match[0], '', $_REQUEST[$key]);
+                $_REQUEST[$key] = $reqPieces[$i];
+            }
+        }
     }
 }

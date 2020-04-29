@@ -40,7 +40,12 @@ Json-file with routes example:
 ```json
 {
   "get": {
-    "users": [
+    "/users": [
+      "NameOfControllerWithoutControllerSuffix",
+      "NameOfAction",
+      "html"
+    ],
+    "/users/{id:int}": [
       "NameOfControllerWithoutControllerSuffix",
       "NameOfAction",
       "html"
@@ -48,7 +53,8 @@ Json-file with routes example:
   }
 }
 ```
-You can use Request static methods if you need $_GET/$_POST data in your action-method. The methods have basic data-filters for *intiger*, *email*.
+You can use Request static methods if you need $_GET/$_POST data in your action-method. The methods have basic data-filters for *intiger*, *email*, *boolean*.
+Parameter in route can be only string (`{name:str}`) or integer (`{id:int}`).
 ```php
 <?php
 
