@@ -61,6 +61,15 @@ class Request
     }
 
     /**
+     * @param string $name
+     * @return array
+     */
+    public static function getArray(string $name): array
+    {
+        return is_array($_REQUEST[$name]) ? $_REQUEST[$name] : [];
+    }
+
+    /**
      * @param string $class
      * @param string $method
      * @return array
