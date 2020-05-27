@@ -66,6 +66,10 @@ class Request
      */
     public static function getArray(string $name): array
     {
+        if (is_string($_REQUEST[$name])) {
+            return explode(',', $_REQUEST[$name]);
+        }
+
         return is_array($_REQUEST[$name]) ? $_REQUEST[$name] : [];
     }
 
