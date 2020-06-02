@@ -177,7 +177,7 @@ abstract class AbstractRouter implements RouterInterface
             $path = str_replace($match, '{'.$data[1].'}', $path);
             $_REQUEST[$data[0]] = $match . array_search($match, $reqPieces ?? []);
         }
-        return '/' . str_replace(['/', '{int}', '{str}'], ['\\/', '(\d+)', '(\w+)'], $path) . '$/';
+        return '/' . str_replace(['/', '{int}', '{str}'], ['\\/', '(\d+)', '(\w+)'], $path) . '\/?$/';
     }
 
     /**
