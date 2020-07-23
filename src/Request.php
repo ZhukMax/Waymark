@@ -67,7 +67,11 @@ class Request
     public static function getArray(string $name): array
     {
         if (is_string($_REQUEST[$name])) {
-            return explode(',', $_REQUEST[$name]);
+            if (!self::isJson($_REQUEST[$name])) {
+                return explode(',', $_REQUEST[$name]);
+            }
+
+            return json_decode($_POST[$name], true);
         }
 
         return is_array($_REQUEST[$name]) ? $_REQUEST[$name] : [];
@@ -119,5 +123,15 @@ class Request
             default:
                 return self::get($arg->getName()) ?? $default;
         }
+    }
+
+    /**
+     * @param string $string
+     * @return bool
+     */
+    private static function isJson(string $string): bool
+    {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
     }
 }
