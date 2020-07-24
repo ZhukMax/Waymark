@@ -1,8 +1,8 @@
-/.idea
-/.idea_modules
+.idea/
+.idea_modules/
 composer.phar
 composer.lock
-/vendor/
-/tests/
+vendor/
+tests/coverage/
 *.lnk
 *.ini

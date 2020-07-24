@@ -13,11 +13,12 @@ class Request
 {
     /**
      * @param string $name
-     * @return string
+     * @return null|string
      */
-    public static function get(string $name): string
+    public static function get(string $name): ?string
     {
-        return trim(str_replace(['\'', '"'], ['\\\'', '\\"'], $_REQUEST[$name])) ?? null;
+        $string = trim(str_replace(['\'', '"'], ['\\\'', '\\"'], $_REQUEST[$name]));
+        return strlen($string) > 0 ? $string : null;
     }
 
     /**
@@ -48,7 +49,7 @@ class Request
             'flags' => FILTER_FLAG_ALLOW_OCTAL
         ];
         
-        return (int)filter_var(self::get($name), FILTER_VALIDATE_INT, $options);
+        return (int)filter_var($_REQUEST[$name], FILTER_VALIDATE_INT, $options);
     }
     
     /**
@@ -67,32 +68,32 @@ class Request
     public static function getArray(string $name): array
     {
         if (is_string($_REQUEST[$name])) {
-            if (!self::isJson($_REQUEST[$name])) {
-                return explode(',', $_REQUEST[$name]);
-            }
-
-            return json_decode($_REQUEST[$name], true);
+            $data = (self::isJson($_REQUEST[$name])) ?
+                json_decode($_REQUEST[$name], true) :
+                explode(',', $_REQUEST[$name]);
+        } else {
+            $data = $_REQUEST[$name];
         }
 
-        return is_array($_REQUEST[$name]) ? $_REQUEST[$name] : [];
+        return is_array($data) ? $data : [];
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    public static function getFiles(): ?array
+    public static function getFiles(): array
     {
         return $_FILES;
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    public static function getImages(): ?array
+    public static function getImages(): array
     {
-        return array_filter($_FILES, function ($file) {
+        return array_values(array_filter($_FILES, function ($file) {
             return (bool)preg_match('/image\/.*/i', $file['type']);
-        });
+        }));
     }
 
     /**

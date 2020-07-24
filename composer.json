@@ -1,7 +1,7 @@
 {
-  "name": "zhukmax/simple-router",
-  "description": "Simple router for php7.1+ projects",
-  "version": "2.0.0",
+  "name": "zhukmax/waymark",
+  "description": "Router for php7.1+ projects",
+  "version": "3.0.0",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -9,12 +9,20 @@
       "email": "zhukmax@ya.ru"
     }
   ],
+  "scripts": {
+    "test": "./vendor/bin/phpunit"
+  },
   "require": {
     "php": ">=7.1.0",
     "ext-json": "*"
   },
-  "require-dev": {},
+  "require-dev": {
+    "phpunit/phpunit": "^9.2"
+  },
   "autoload": {
-    "classmap": ["src"]
+    "psr-4": {
+      "Zhukmax\\Waymark\\": "src/",
+      "Zhukmax\\Waymark\\Tests\\": "tests/"
+    }
   }
 }

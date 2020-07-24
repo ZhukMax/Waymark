@@ -1,27 +1,27 @@
-# SimpleRouter
+# Waymark
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](license.md)
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Simple router for php7.1+ projects like API.
+Waymark is a router for php7.1+ projects like API.
 
 ## Install
 Using composer:
 ```console
-$ composer require zhukmax/simple-router
+$ composer require zhukmax/waymark
 ```
 
 ## Using
-If you need Template engine in your project you can use your favorite like I use Twig in example, but if you need only json/csv responces then just use SimpleRouter without any Template engine.
+If you need Template engine in your project you can use your favorite like I use Twig in example, but if you need only json/csv responces then just use Waymark without any Template engine.
 ```php
 <?php
 
-require_once 'vendor/autoload.php';
+require_once './vendor/autoload.php';
 
 use ProjectName\API\Controllers\IndexController;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Zhukmax\SimpleRouter\Router;
+use Zhukmax\Waymark\Router;
 
 /** Add Twig Template engine **/
 $loader = new FilesystemLoader(__DIR__ . '/src/views');
@@ -53,15 +53,15 @@ Json-file with routes example:
   }
 }
 ```
-You can use Request static methods if you need $_GET/$_POST data in your action-method. The methods have basic data-filters for *intiger*, *email*, *boolean*.
+You can use Request static methods if you need $_GET/$_POST/$_FILES data in your action-method. The methods have basic data-filters for *intiger*, *email*, *boolean*, *array*, *files*, *images*.
 Parameter in route can be only string (`{name:str}`) or integer (`{id:int}`).
 ```php
 <?php
 
 namespace ProjectName\API\Controllers;
 
-use Zhukmax\SimpleRouter\AbstractController;
-use Zhukmax\Router\Request;
+use Zhukmax\Waymark\AbstractController;
+use Zhukmax\Waymark\Request;
 
 class IndexController extends AbstractController
 {
