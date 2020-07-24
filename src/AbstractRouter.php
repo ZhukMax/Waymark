@@ -1,21 +1,18 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
-
-use Zhukmax\SimpleRouter\Types\Json;
-use Zhukmax\SimpleRouter\Types\TypeInterface;
+namespace Zhukmax\Waymark;
 
 /**
  * Class AbstractRouter
- * @package Zhukmax\SimpleRouter
+ * @package Zhukmax\Waymark
  */
-abstract class AbstractRouter implements RouterInterface
+abstract class AbstractRouter implements Interfaces\RouterInterface
 {
-    /** @var TplEngineInterface Template engine's object */
+    /** @var Interfaces\TplEngineInterface Template engine's object */
     public $tplEngine;
     /** @var array */
     protected $routes;
-    /** @var TypeInterface */
+    /** @var Types\TypeInterface */
     protected $type;
     /** @var string|array */
     protected $output;
@@ -117,7 +114,7 @@ abstract class AbstractRouter implements RouterInterface
     {
         $this->output['status'] = "Error";
         $this->output['error'] = $message;
-        $this->type = new Json();
+        $this->type = new Types\Json();
     }
 
     protected final function finishWork(): void
@@ -154,7 +151,7 @@ abstract class AbstractRouter implements RouterInterface
     private function setType(string $activeRouteType): void
     {
         /** @var string $type */
-        $type = "\\Zhukmax\\SimpleRouter\\Types\\" . ucfirst($activeRouteType);
+        $type = "\\Zhukmax\\Waymark\\Types\\" . ucfirst($activeRouteType);
         if (!class_exists($type)) {
             throw new Exception("Type class is not exists");
         }
@@ -177,7 +174,7 @@ abstract class AbstractRouter implements RouterInterface
             $path = str_replace($match, '{'.$data[1].'}', $path);
             $_REQUEST[$data[0]] = $match . array_search($match, $reqPieces ?? []);
         }
-        return '/' . str_replace(['/', '{int}', '{str}'], ['\\/', '(\d+)', '(\w+)'], $path) . '\/?$/';
+        return '/' . str_replace(['/', '{int}', '{str}'], ['\\/', '(\d+)', '(\S+)'], $path) . '\/*/';
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
+namespace Zhukmax\Waymark;
 
 /**
  * Class Exception
- * @package Zhukmax\SimpleRouter
+ * @package Zhukmax\Waymark
  */
 class Exception extends \Exception
 {

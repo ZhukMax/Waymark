@@ -1,10 +1,10 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
+namespace Zhukmax\Waymark\Interfaces;
 
 /**
  * Interface TplEngineInterface
- * @package Zhukmax\SimpleRouter
+ * @package Zhukmax\Waymark\Interfaces
  */
 interface TplEngineInterface
 {

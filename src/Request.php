@@ -1,13 +1,13 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
+namespace Zhukmax\Waymark;
 
 use ReflectionException;
 use ReflectionMethod;
 
 /**
  * Class Request
- * @package Zhukmax\SimpleRouter
+ * @package Zhukmax\Waymark
  */
 class Request
 {
@@ -27,7 +27,7 @@ class Request
      */
     public static function getBool(string $name, bool $default = false): bool
     {
-        return (bool)$_REQUEST[$name] ?? $default;
+        return isset($_REQUEST[$name]) ? (bool)$_REQUEST[$name] : $default;
     }
 
     /**
@@ -55,7 +55,7 @@ class Request
      * @param string $name
      * @return string
      */
-    public static function getEmail(string $name): string
+    public static function getEmail(string $name = 'email'): string
     {
         return filter_var(self::get($name), FILTER_VALIDATE_EMAIL) ?: '';
     }
@@ -71,10 +71,28 @@ class Request
                 return explode(',', $_REQUEST[$name]);
             }
 
-            return json_decode($_POST[$name], true);
+            return json_decode($_REQUEST[$name], true);
         }
 
         return is_array($_REQUEST[$name]) ? $_REQUEST[$name] : [];
+    }
+
+    /**
+     * @return array|null
+     */
+    public static function getFiles(): ?array
+    {
+        return $_FILES;
+    }
+
+    /**
+     * @return array|null
+     */
+    public static function getImages(): ?array
+    {
+        return array_filter($_FILES, function ($file) {
+            return (bool)preg_match('/image\/.*/i', $file['type']);
+        });
     }
 
     /**

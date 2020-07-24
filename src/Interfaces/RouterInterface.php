@@ -1,10 +1,10 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
+namespace Zhukmax\Waymark\Interfaces;
 
 /**
  * Interface RouterInterface
- * @package Zhukmax\SimpleRouter
+ * @package Zhukmax\Waymark
  */
 interface RouterInterface
 {

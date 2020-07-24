@@ -1,6 +1,8 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
+namespace Zhukmax\Waymark;
+
+use Zhukmax\Waymark\Interfaces\RouterInterface;
 
 /**
  * Class Router

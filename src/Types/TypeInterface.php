@@ -1,10 +1,10 @@
 <?php
 
-namespace Zhukmax\SimpleRouter\Types;
+namespace Zhukmax\Waymark\Types;
 
 /**
  * Interface TypeInterface
- * @package Zhukmax\SimpleRouter\Types
+ * @package Zhukmax\Waymark\Types
  */
 interface TypeInterface
 {

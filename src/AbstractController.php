@@ -1,14 +1,14 @@
 <?php
 
-namespace Zhukmax\SimpleRouter;
+namespace Zhukmax\Waymark;
 
 /**
  * Class AbstractController
- * @package Zhukmax\SimpleRouter
+ * @package Zhukmax\Waymark
  */
 abstract class AbstractController
 {
-    /** @var TplEngineInterface */
+    /** @var Interfaces\TplEngineInterface */
     protected $tpl;
 
     /**

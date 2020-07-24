@@ -1,10 +1,10 @@
 <?php
 
-namespace Zhukmax\SimpleRouter\Types;
+namespace Zhukmax\Waymark\Types;
 
 /**
  * Class Text
- * @package Zhukmax\SimpleRouter\Types
+ * @package Zhukmax\Waymark\Types
  */
 class Text implements TypeInterface
 {

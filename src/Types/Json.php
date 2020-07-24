@@ -1,10 +1,10 @@
 <?php
 
-namespace Zhukmax\SimpleRouter\Types;
+namespace Zhukmax\Waymark\Types;
 
 /**
  * Class Json
- * @package Zhukmax\SimpleRouter\Types
+ * @package Zhukmax\Waymark\Types
  */
 class Json implements TypeInterface
 {
