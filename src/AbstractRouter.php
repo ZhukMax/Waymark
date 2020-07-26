@@ -29,7 +29,7 @@ abstract class AbstractRouter implements Interfaces\RouterInterface
         $this->namespace = $params['namespace'] ?? null;
 
         if ($params['routes']) {
-            if (is_file($params['routes'])) {
+            if (is_string($params['routes']) && is_file($params['routes'])) {
                 $routesGroups = json_decode(file_get_contents($params['routes']), true);
             }
 
@@ -56,7 +56,8 @@ abstract class AbstractRouter implements Interfaces\RouterInterface
                 if (!method_exists($this, $key)) {
                     throw new Exception("Not exist method: " . $key);
                 }
-                $this->$key($path, $item[0] . 'Controller', $item[1], $type);
+                $controller = $this->controllerName($item[0]);
+                $this->$key($path, $controller, $item[1], $type);
             }
         }
     }
@@ -90,7 +91,7 @@ abstract class AbstractRouter implements Interfaces\RouterInterface
     {
         /** @var array $activeRoute */
         $activeRoute = $this->getActiveRoute();
-        $className = $this->controllerName($activeRoute);
+        $className = $activeRoute['class'];
 
         /** @var AbstractController $controller */
         $controller = (new $className($this->tplEngine));
@@ -125,16 +126,17 @@ abstract class AbstractRouter implements Interfaces\RouterInterface
     }
 
     /**
-     * @param array $activeRoute
+     * @param string $className
      * @return string
      * @throws Exception
      */
-    private function controllerName(array $activeRoute): string
+    private function controllerName(string $className): string
     {
-        if (!strpos($activeRoute['class'], '\\') && isset($this->namespace)) {
-            $className = $this->namespace . '\\' . $activeRoute['class'];
-        } else {
-            $className = $activeRoute['class'];
+        if (!strpos($className, '\\') && isset($this->namespace)) {
+            if (!strpos($className, 'Controller')) {
+                $className = $className . 'Controller';
+            }
+            $className = $this->namespace . '\\' . ucfirst($className);
         }
 
         if (!class_exists($className)) {
@@ -197,7 +199,7 @@ abstract class AbstractRouter implements Interfaces\RouterInterface
         }
 
         if (!in_array(strtolower($_SERVER["REQUEST_METHOD"]), $activeRoute['method'])) {
-            throw new Exception("Wrong HTTP method: " . $activeRoute['method']);
+            throw new Exception("Wrong HTTP method: " . $_SERVER["REQUEST_METHOD"]);
         }
 
         return $activeRoute;

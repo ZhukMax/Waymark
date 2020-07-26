@@ -27,12 +27,11 @@ use Zhukmax\Waymark\Router;
 $loader = new FilesystemLoader(__DIR__ . '/src/views');
 $twig = new Environment($loader);
 
-$router = new Router([
+(new Router([
     'tplEngine' => $twig,
     'namespace' => '\\ProjectName\\API\\Controllers',
     'routes' => dirname(__FILE__).'/routes.json'
-]);
-$router
+]))
     ->get('/api/users', IndexController::class, 'actionGetAll', 'json')
     ->output();
 ```
@@ -90,9 +89,9 @@ class IndexController extends AbstractController
 
 The Apache License Version 2.0. You can find text of License in the [License File](license.md).
 
-[ico-version]: https://img.shields.io/packagist/v/zhukmax/simple-router.svg
+[ico-version]: https://img.shields.io/packagist/v/zhukmax/waymark.svg
 [ico-license]: https://img.shields.io/badge/license-Apache%202-brightgreen.svg
-[ico-downloads]: https://img.shields.io/packagist/dt/zhukmax/simple-router.svg
+[ico-downloads]: https://img.shields.io/packagist/dt/zhukmax/waymark.svg
 
-[link-packagist]: https://packagist.org/packages/zhukmax/simple-router
-[link-downloads]: https://packagist.org/packages/zhukmax/simple-router
+[link-packagist]: https://packagist.org/packages/zhukmax/waymark
+[link-downloads]: https://packagist.org/packages/zhukmax/waymark
